@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mitbewohnerwahl – Kandidaten-Duell</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F7F1E8;
+    --paper-dark: #EFE2CF;
+    --ink: #2D251F;
+    --ink-soft: #716256;
+    --stamp-red: #5F8D6A;
+    --gold: #C97B4B;
+    --pin: #C86F4A;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body { margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--paper);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(95,141,106,0.13), transparent 40%),
+      radial-gradient(circle at 85% 0%, rgba(201,123,75,0.14), transparent 35%),
+      linear-gradient(135deg, rgba(255,255,255,0.45), transparent 55%);
+    color: var(--ink);
+    font-family: 'Quicksand', Arial, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .view {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+
+  .case-header {
+    text-align: center;
+    padding: 1.4rem 1rem 1.6rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--gold);
+    background: rgba(255, 250, 241, .72);
+    border-radius: 22px;
+    box-shadow: 0 12px 34px rgba(45,37,31,.07);
+  }
+
+  .eyebrow {
+    font-family: 'Quicksand', Arial, sans-serif;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--stamp-red);
+    margin: 0 0 .6rem;
+  }
+
+  .question, h1.question {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 900;
+    font-size: clamp(1.5rem, 4vw, 2.4rem);
+    line-height: 1.2;
+    margin: 0 0 .75rem;
+  }
+
+  .sub {
+    color: var(--ink-soft);
+    font-size: .9rem;
+    max-width: 46ch;
+    margin: 0 auto;
+  }
+
+  .panel {
+    background: rgba(255, 250, 241, .88);
+    border: 1px solid rgba(45,37,31,.12);
+    border-radius: 18px;
+    padding: 1.25rem 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0 10px 28px rgba(45,37,31,.08);
+  }
+
+  .panel-title {
+    font-family: 'Quicksand', Arial, sans-serif;
+    font-size: .85rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 .9rem;
+    border-bottom: 1px dashed rgba(36,31,22,.25);
+    padding-bottom: .5rem;
+  }
+
+  .field-label {
+    display: block;
+    font-size: .8rem;
+    color: var(--ink-soft);
+    margin-bottom: .35rem;
+  }
+
+  .text-input {
+    width: 100%;
+    font: inherit;
+    padding: .7rem .8rem;
+    border: 1px solid rgba(45,37,31,.22);
+    background: #fffaf2;
+    color: var(--ink);
+    border-radius: 12px;
+  }
+
+  .text-input:focus-visible,
+  .btn-outline:focus-visible,
+  .btn-solid:focus-visible,
+  .evidence-card:focus-visible,
+  .row-btn:focus-visible,
+  .dropzone:focus-within {
+    outline: 3px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: .25rem;
+    padding: 1.5rem;
+    border: 2px dashed rgba(95,141,106,.45);
+    border-radius: 18px;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color .15s, background .15s;
+  }
+
+  .dropzone:hover { border-color: var(--stamp-red); background: rgba(156,59,46,.05); }
+
+  .dropzone-title { font-weight: bold; }
+  .dropzone-sub { font-size: .75rem; color: var(--ink-soft); }
+
+  .image-list {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .image-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    background: var(--paper);
+    border: 1px solid rgba(36,31,22,.15);
+    border-radius: 2px;
+    padding: .4rem .5rem;
+  }
+
+  .image-row img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+    border: 1px solid rgba(36,31,22,.25);
+  }
+
+  .image-row input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    padding: .4rem .5rem;
+    border: 1px solid rgba(36,31,22,.25);
+    background: #fff;
+    border-radius: 2px;
+  }
+
+  .row-btn {
+    border: 1px solid rgba(36,31,22,.3);
+    background: transparent;
+    color: var(--ink);
+    border-radius: 2px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    font-size: .85rem;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .row-btn:hover:not(:disabled) { background: rgba(36,31,22,.08); }
+  .row-btn:disabled { opacity: .3; cursor: not-allowed; }
+  .row-btn.danger { color: var(--stamp-red); border-color: rgba(156,59,46,.4); }
+
+  .hint { font-size: .8rem; color: var(--ink-soft); margin: .5rem 0 0; }
+  .hint-small { font-size: .72rem; margin-top: .9rem; }
+  .hint code { background: rgba(36,31,22,.08); padding: .1rem .3rem; border-radius: 2px; }
+
+  ol.steps { margin: 0; padding-left: 1.2rem; font-size: .85rem; color: var(--ink-soft); }
+  ol.steps li { margin-bottom: .35rem; }
+
+  .button-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .5rem; }
+
+  .btn-solid, .btn-outline {
+    font-family: 'Quicksand', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    font-size: .8rem;
+    font-weight: 700;
+    padding: .8rem 1.15rem;
+    border-radius: 999px;
+    cursor: pointer;
+    border: 1px solid var(--ink);
+    transition: transform .12s ease, background .15s, color .15s;
+  }
+
+  .btn-solid { background: var(--stamp-red); color: #fff; border-color: var(--stamp-red); }
+  .btn-solid:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn-outline { background: transparent; color: var(--ink); }
+  .btn-outline:hover:not(:disabled) { background: rgba(36,31,22,.06); }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+
+  .back-btn {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    background: var(--paper);
+  }
+
+  /* Quiz view */
+  .duel-area { text-align: center; }
+
+  .progress-text {
+    font-size: .8rem;
+    color: var(--ink-soft);
+    margin: 0 0 .5rem;
+  }
+
+  .progress-track {
+    height: 4px;
+    background: rgba(36,31,22,.15);
+    border-radius: 2px;
+    overflow: hidden;
+    max-width: 320px;
+    margin: 0 auto 2rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--stamp-red);
+    width: 0%;
+    transition: width .3s ease;
+  }
+
+  .duel-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .evidence-card {
+    position: relative;
+    background: #fffaf2;
+    border: 1px solid rgba(45,37,31,.12);
+    border-radius: 18px;
+    padding: .75rem .75rem 1rem;
+    width: min(280px, 42vw);
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(45,37,31,.14);
+    transition: transform .18s ease, box-shadow .18s ease;
+    font: inherit;
+    text-align: center;
+  }
+
+  .card-left { transform: rotate(-2.5deg); }
+  .card-right { transform: rotate(2.5deg); }
+
+  .evidence-card:hover,
+  .evidence-card:focus-visible {
+    transform: rotate(0deg) translateY(-4px);
+    box-shadow: 0 10px 22px rgba(36,31,22,.28);
+  }
+
+  .pin {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #d8574a, var(--pin));
+    box-shadow: 0 2px 3px rgba(0,0,0,.35);
+  }
+
+  .evidence-img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    display: block;
+    margin-bottom: .7rem;
+    background: #eee;
+    border-radius: 14px;
+  }
+
+  .evidence-label {
+    display: block;
+    font-size: .85rem;
+    letter-spacing: .02em;
+  }
+
+  .vs { font-size: 1.8rem; color: var(--gold); flex-shrink: 0; filter: drop-shadow(0 2px 2px rgba(45,37,31,.15)); }
+
+  .result-area { text-align: center; }
+
+  .verdict-card {
+    position: relative;
+    display: inline-block;
+    background: #fffaf2;
+    padding: 1rem 1rem 1.4rem;
+    border: 1px solid rgba(45,37,31,.12);
+    border-radius: 20px;
+    box-shadow: 0 12px 30px rgba(45,37,31,.18);
+    margin-bottom: 1.5rem;
+  }
+
+  .winner-img {
+    width: min(280px, 70vw);
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto .75rem;
+    border-radius: 16px;
+  }
+
+  .winner-name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .stamp {
+    position: absolute;
+    top: 14px;
+    right: -10px;
+    transform: rotate(12deg);
+    border: 3px solid var(--stamp-red);
+    color: var(--stamp-red);
+    text-transform: uppercase;
+    font-size: .7rem;
+    letter-spacing: .06em;
+    padding: .3rem .5rem;
+    border-radius: 4px;
+    opacity: .9;
+    background: rgba(255,255,255,.6);
+  }
+
+  .empty-state { text-align: center; color: var(--ink-soft); padding: 2rem 1rem; }
+
+  .checkbox-row { display: flex; align-items: flex-start; gap: .5rem; margin-top: .9rem; font-size: .85rem; }
+  .checkbox-row input { margin-top: .2rem; flex-shrink: 0; }
+
+  .stats-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .stats-total { font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 1.1rem; }
+
+  .podium {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0 2rem;
+  }
+
+  .podium-card {
+    background: #fff;
+    border: 1px solid rgba(36,31,22,.15);
+    box-shadow: 0 6px 16px rgba(36,31,22,.18);
+    padding: .9rem .9rem 1rem;
+    text-align: center;
+    width: 150px;
+  }
+
+  .podium-rank {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin: 0 0 .5rem;
+    color: var(--ink-soft);
+  }
+
+  .podium-img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; margin-bottom: .5rem; }
+  .podium-name { font-weight: bold; font-size: .85rem; margin: 0 0 .25rem; }
+  .podium-count { font-size: .78rem; color: var(--ink-soft); margin: 0; }
+
+  .medal-gold { order: 2; transform: translateY(-14px); border-color: var(--gold); }
+  .medal-silver { order: 1; }
+  .medal-bronze { order: 3; }
+  .medal-gold .podium-rank { color: var(--gold); }
+  .medal-silver .podium-rank { color: #8a8a8a; }
+  .medal-bronze .podium-rank { color: #9c5a2e; }
+
+  .rank-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .rank-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    background: var(--paper-dark);
+    border: 1px solid rgba(36,31,22,.12);
+    border-radius: 2px;
+    padding: .4rem .6rem;
+    font-size: .85rem;
+  }
+
+  .rank-row img { width: 32px; height: 32px; object-fit: cover; border-radius: 2px; flex-shrink: 0; }
+  .rank-num { width: 1.6rem; color: var(--ink-soft); flex-shrink: 0; }
+  .rank-name { flex: 1; }
+  .rank-count { font-weight: bold; }
+
+  @media (max-width: 560px) {
+    .duel-row { gap: 1rem; }
+    .evidence-card { width: min(220px, 44vw); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    .card-left, .card-right { transform: none !important; }
+    .evidence-card:hover, .evidence-card:focus-visible { transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div id="admin-view" class="view">
+    <header class="case-header">
+      <p class="eyebrow">WG-Casting vorbereiten</p>
+      <h1 class="question">Mitbewohnerwahl einrichten</h1>
+      <p class="sub">Diese Seite ist nur für dich als WG. Lade Fotos der Kandidatinnen und Kandidaten hoch, benenne sie und erzeuge danach die fertige Abstimmungsseite.</p>
+    </header>
+
+    <section class="panel">
+      <h2 class="panel-title">1 · Frage</h2>
+      <label class="field-label" for="question-input">Frage, die über den Fotos steht</label>
+      <input type="text" id="question-input" class="text-input" value="Wer wird unser neuer Mitbewohner?">
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">2 · Kandidatenfotos</h2>
+      <label class="dropzone" for="file-input" tabindex="0">
+        <span class="dropzone-title">Fotos auswählen</span>
+        <span class="dropzone-sub">JPG oder PNG, mehrere Fotos gleichzeitig möglich</span>
+        <input type="file" id="file-input" accept="image/*" multiple hidden>
+      </label>
+
+      <ul id="image-list" class="image-list"></ul>
+      <p id="image-count" class="hint">Noch keine Fotos hochgeladen.</p>
+      <p class="hint">Tipp: Fotos werden automatisch verkleinert. Trotzdem gilt: viele oder sehr große Fotos ergeben eine größere Datei.</p>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">3 · Ergebnisse sammeln (optional)</h2>
+      <p class="hint" style="margin-top:0;">Wenn aktiv, meldet die Abstimmungsseite nach jedem abgeschlossenen Duell-Durchlauf nur, <em>welche Person gewonnen hat</em> – anonym, ohne Namen oder sonstige Daten der Abstimmenden. Dafür wird ein kostenloser, unabhängiger Zähldienst (abacus.jasoncameron.dev) genutzt. Bitte beachte: Dieser Dienst ist nicht von uns, könnte theoretisch ausfallen, und ungenutzte Zähler verfallen nach ca. 6 Monaten. Die Übersichtsseite ist nicht passwortgeschützt – teile ihren Link nur mit dir selbst.</p>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="tracking-checkbox" checked>
+        <span>Ergebnisse für eine WG-Übersicht zählen</span>
+      </label>
+
+      <label class="field-label" for="namespace-input" style="margin-top:.9rem;">Kennung dieser Wahl (Namespace)</label>
+      <input type="text" id="namespace-input" class="text-input">
+      <p class="hint">Abstimmungsseite und Übersicht müssen dieselbe Kennung verwenden. Notiere sie dir, falls du später erneut exportierst.</p>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">4 · Testen &amp; herunterladen</h2>
+      <p class="hint" style="margin-top:0;">Mindestens 2 Kandidatenfotos nötig. Namen und Reihenfolge kannst du jederzeit anpassen.</p>
+      <div class="button-row">
+        <button type="button" id="preview-btn" class="btn-outline" disabled>Vorschau testen</button>
+        <button type="button" id="link-btn" class="btn-solid" disabled>Wahl-Link generieren &amp; kopieren</button>
+        <button type="button" id="export-overview-btn" class="btn-outline" disabled>WG-Übersicht öffnen</button>
+      </div>
+      <div id="link-output" style="display:none; margin-top:.9rem;">
+        <label class="field-label">Link für die Abstimmung (bereits kopiert):</label>
+        <input type="text" id="link-url" class="text-input" readonly style="word-break:break-all;">
+        <p class="hint">Diesen Link mit deiner WG oder den Abstimmenden teilen. Er öffnet die Wahl direkt im Browser – auch auf iPad und Handy, ohne App oder Download.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2 class="panel-title">5 · Veröffentlichen</h2>
+      <ol class="steps">
+        <li>Diese HTML-Datei in dein GitHub-Repository hochladen und dort in <code>index.html</code> umbenennen.</li>
+        <li>Unter <em>Settings → Pages</em> GitHub Pages aktivieren.</li>
+        <li>Den Link mit deiner WG oder den Abstimmenden teilen – die Fotos sind bereits enthalten, niemand muss selbst etwas hochladen.</li>
+        <li>Die Übersicht kannst du einfach auf deinem eigenen Rechner öffnen, wenn du die Top 3 sehen willst (Internetverbindung nötig).</li>
+      </ol>
+    </section>
+  </div>
+
+  <div id="quiz-view" class="view">
+    <header class="case-header">
+      <p class="eyebrow">WG-Casting · Kandidaten-Duell</p>
+      <h1 id="quiz-question" class="question">Wer wird unser neuer Mitbewohner?</h1>
+    </header>
+
+    <div id="duel-area" class="duel-area">
+      <p id="progress-text" class="progress-text"></p>
+      <div class="progress-track"><div id="progress-fill" class="progress-fill"></div></div>
+
+      <div class="duel-row">
+        <button type="button" class="evidence-card card-left" id="card-left" aria-label="Linke Person auswählen">
+          <span class="pin" aria-hidden="true"></span>
+          <img id="img-left" class="evidence-img" alt="">
+          <span class="evidence-label" id="label-left"></span>
+        </button>
+
+        <span class="vs" aria-hidden="true">🏠</span>
+
+        <button type="button" class="evidence-card card-right" id="card-right" aria-label="Rechte Person auswählen">
+          <span class="pin" aria-hidden="true"></span>
+          <img id="img-right" class="evidence-img" alt="">
+          <span class="evidence-label" id="label-right"></span>
+        </button>
+      </div>
+    </div>
+
+    <div id="result-area" class="result-area" style="display:none">
+      <p class="eyebrow">Das Ergebnis steht fest</p>
+      <div class="verdict-card">
+        <span class="stamp">WG-Favorit</span>
+        <img id="winner-img" class="winner-img" alt="">
+        <p id="winner-name" class="winner-name"></p>
+      </div>
+      <button type="button" id="restart-btn" class="btn-outline">Nochmal abstimmen</button>
+    </div>
+
+    <div id="empty-state" class="empty-state" style="display:none">
+      <p>Es sind nicht genügend Kandidatenfotos hinterlegt (mindestens 2 nötig).</p>
+    </div>
+  </div>
+
+  <div id="overview-template" class="view">
+    <header class="case-header">
+      <p class="eyebrow">Wahlauswertung</p>
+      <h1 id="ov-question" class="question">Wer wird unser neuer Mitbewohner?</h1>
+      <p class="sub">Gesamtauswertung aller abgeschlossenen Abstimmungen.</p>
+    </header>
+
+    <div class="panel stats-bar">
+      <span id="ov-total" class="stats-total"></span>
+      <button type="button" id="ov-refresh" class="btn-outline">Aktualisieren</button>
+    </div>
+    <p id="ov-updated" class="hint" style="text-align:center;"></p>
+
+    <div id="ov-loading" class="empty-state"><p>Ergebnisse werden geladen …</p></div>
+    <div id="ov-error" class="empty-state" style="display:none">
+      <p>Die Ergebnisse konnten nicht geladen werden. Prüfe deine Internetverbindung und versuche es erneut.</p>
+      <button type="button" id="ov-retry" class="btn-outline">Erneut versuchen</button>
+    </div>
+    <div id="ov-empty" class="empty-state" style="display:none">
+      <p>Noch keine Ergebnisse. Sobald jemand die Wahl abgeschlossen hat, erscheinen sie hier.</p>
+    </div>
+
+    <div id="ov-podium" class="podium" style="display:none"></div>
+    <ol id="ov-list" class="rank-list" style="display:none"></ol>
+  </div>
+
+  <button type="button" id="back-to-edit-btn" class="btn-outline back-btn" style="display:none">← Zurück zur Bearbeitung</button>
+
+  <script>
+    // Pristine copies captured before any runtime mutation happens.
+    var CSS_TEXT = document.querySelector('style').textContent;
+    var QUIZ_TEMPLATE = document.getElementById('quiz-view').outerHTML;
+    document.getElementById('quiz-view').style.display = 'none';
+    var OVERVIEW_TEMPLATE = document.getElementById('overview-template').outerHTML;
+    document.getElementById('overview-template').style.display = 'none';
+
+    var DEFAULT_QUESTION = 'Wer wird unser neuer Mitbewohner?';
+    var images = []; // { name, dataUrl }
+
+    var fileInput = document.getElementById('file-input');
+    var imageList = document.getElementById('image-list');
+    var imageCount = document.getElementById('image-count');
+    var questionInput = document.getElementById('question-input');
+    var namespaceInput = document.getElementById('namespace-input');
+    var trackingCheckbox = document.getElementById('tracking-checkbox');
+    var previewBtn = document.getElementById('preview-btn');
+    var linkBtn = document.getElementById('link-btn');
+    var linkOutput = document.getElementById('link-output');
+    var linkUrl = document.getElementById('link-url');
+    var exportOverviewBtn = document.getElementById('export-overview-btn');
+    var backBtn = document.getElementById('back-to-edit-btn');
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function toEmbeddableJSON(value) {
+      return JSON.stringify(value).replace(/<\//g, '<\\/');
+    }
+
+    // Turns arbitrary text into a safe key/namespace for the counting API
+    // (only letters, numbers, "_", "-", "."; 3-64 chars).
+    function sanitizeKey(str) {
+      var s = String(str || '').normalize('NFKD').replace(/[\u0300-\u036f]/g, '');
+      s = s.toLowerCase().replace(/[^a-z0-9_.-]/g, '-').replace(/-+/g, '-').replace(/^[-.]+|[-.]+$/g, '');
+      if (!s) s = 'kandidat';
+      if (s.length < 3) s = (s + '---').slice(0, 3);
+      if (s.length > 64) s = s.slice(0, 64);
+      return s;
+    }
+
+    function randomNamespace() {
+      var chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      var s = '';
+      for (var i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)];
+      return 'wahl-' + s;
+    }
+
+    function readAndCompressImage(file) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onerror = function () { reject(reader.error || new Error('Lesefehler')); };
+        reader.onload = function () {
+          var img = new Image();
+          img.onerror = function () { reject(new Error('Foto konnte nicht gelesen werden')); };
+          img.onload = function () {
+            var maxDim = 1000;
+            var w = img.naturalWidth || 1;
+            var h = img.naturalHeight || 1;
+            var scale = Math.min(1, maxDim / Math.max(w, h));
+            var cw = Math.max(1, Math.round(w * scale));
+            var ch = Math.max(1, Math.round(h * scale));
+            var canvas = document.createElement('canvas');
+            canvas.width = cw;
+            canvas.height = ch;
+            var ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, cw, ch);
+            ctx.drawImage(img, 0, 0, cw, ch);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function updateActionButtons() {
+      var ready = images.length >= 2;
+      previewBtn.disabled = !ready;
+      linkBtn.disabled = !ready;
+      exportOverviewBtn.disabled = !ready || !trackingCheckbox.checked;
+    }
+
+    function renderImageList() {
+      imageList.innerHTML = '';
+
+      images.forEach(function (item, idx) {
+        var li = document.createElement('li');
+        li.className = 'image-row';
+
+        var thumb = document.createElement('img');
+        thumb.src = item.dataUrl;
+        thumb.alt = '';
+        li.appendChild(thumb);
+
+        var nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.value = item.name;
+        nameInput.setAttribute('aria-label', 'Name für Foto ' + (idx + 1));
+        nameInput.addEventListener('input', function () {
+          images[idx].name = nameInput.value;
+        });
+        li.appendChild(nameInput);
+
+        var upBtn = document.createElement('button');
+        upBtn.type = 'button';
+        upBtn.className = 'row-btn';
+        upBtn.textContent = '▲';
+        upBtn.setAttribute('aria-label', 'Nach oben verschieben');
+        upBtn.disabled = idx === 0;
+        upBtn.addEventListener('click', function () {
+          var tmp = images[idx - 1];
+          images[idx - 1] = images[idx];
+          images[idx] = tmp;
+          renderImageList();
+        });
+        li.appendChild(upBtn);
+
+        var downBtn = document.createElement('button');
+        downBtn.type = 'button';
+        downBtn.className = 'row-btn';
+        downBtn.textContent = '▼';
+        downBtn.setAttribute('aria-label', 'Nach unten verschieben');
+        downBtn.disabled = idx === images.length - 1;
+        downBtn.addEventListener('click', function () {
+          var tmp = images[idx + 1];
+          images[idx + 1] = images[idx];
+          images[idx] = tmp;
+          renderImageList();
+        });
+        li.appendChild(downBtn);
+
+        var delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'row-btn danger';
+        delBtn.textContent = '✕';
+        delBtn.setAttribute('aria-label', 'Foto entfernen');
+        delBtn.addEventListener('click', function () {
+          images.splice(idx, 1);
+          renderImageList();
+          updateActionButtons();
+        });
+        li.appendChild(delBtn);
+
+        imageList.appendChild(li);
+      });
+
+      imageCount.textContent = images.length === 0
+        ? 'Noch keine Fotos hochgeladen.'
+        : images.length + ' Foto' + (images.length === 1 ? '' : 's') + ' hochgeladen.';
+    }
+
+    fileInput.addEventListener('change', function (e) {
+      var files = Array.prototype.slice.call(e.target.files || []);
+      files.forEach(function (file) {
+        readAndCompressImage(file).then(function (dataUrl) {
+          var name = file.name.replace(/\.[^.]+$/, '');
+          images.push({ name: name, dataUrl: dataUrl });
+          renderImageList();
+          updateActionButtons();
+        }).catch(function (err) {
+          console.error(err);
+          alert('Dieses Foto konnte nicht geladen werden: ' + file.name);
+        });
+      });
+      fileInput.value = '';
+    });
+
+    // --- Quiz logic. Written as a single, self-contained function so it can
+    // be embedded as-is (via toString) into the exported student file. ---
+    function initQuiz(images, question, namespace) {
+      var duelArea = document.getElementById('duel-area');
+      var emptyState = document.getElementById('empty-state');
+      var qEl = document.getElementById('quiz-question');
+      if (qEl) qEl.textContent = question || '';
+
+      if (!Array.isArray(images) || images.length < 2) {
+        if (duelArea) duelArea.style.display = 'none';
+        if (emptyState) emptyState.style.display = 'block';
+        return;
+      }
+      if (emptyState) emptyState.style.display = 'none';
+      if (duelArea) duelArea.style.display = 'block';
+
+      var progressText = document.getElementById('progress-text');
+      var progressFill = document.getElementById('progress-fill');
+      var imgLeft = document.getElementById('img-left');
+      var imgRight = document.getElementById('img-right');
+      var labelLeft = document.getElementById('label-left');
+      var labelRight = document.getElementById('label-right');
+      var cardLeft = document.getElementById('card-left');
+      var cardRight = document.getElementById('card-right');
+      var resultArea = document.getElementById('result-area');
+      var winnerImg = document.getElementById('winner-img');
+      var winnerName = document.getElementById('winner-name');
+      var restartBtn = document.getElementById('restart-btn');
+
+      var order = [];
+      var champIndex = 0;
+      var nextIndex = 1;
+      var total = 1;
+      var hasTracked = false; // only count the first completed run per page load
+
+      function shuffle(arr) {
+        var a = arr.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+        }
+        return a;
+      }
+
+      function start() {
+        order = shuffle(images);
+        champIndex = 0;
+        nextIndex = 1;
+        total = order.length - 1;
+        resultArea.style.display = 'none';
+        duelArea.style.display = 'block';
+        render();
+      }
+
+      function render() {
+        var champ = order[champIndex];
+        var chall = order[nextIndex];
+        imgLeft.src = champ.dataUrl;
+        imgLeft.alt = champ.name;
+        labelLeft.textContent = champ.name;
+        cardLeft.setAttribute('aria-label', 'Auswählen: ' + champ.name);
+        imgRight.src = chall.dataUrl;
+        imgRight.alt = chall.name;
+        labelRight.textContent = chall.name;
+        cardRight.setAttribute('aria-label', 'Auswählen: ' + chall.name);
+        progressText.textContent = 'Duell ' + nextIndex + ' von ' + total;
+        progressFill.style.width = Math.round(((nextIndex - 1) / total) * 100) + '%';
+      }
+
+      function choose(side) {
+        if (side === 'right') champIndex = nextIndex;
+        nextIndex++;
+        if (nextIndex >= order.length) {
+          finish();
+        } else {
+          render();
+        }
+      }
+
+      function finish() {
+        var winner = order[champIndex];
+        duelArea.style.display = 'none';
+        resultArea.style.display = 'block';
+        winnerImg.src = winner.dataUrl;
+        winnerImg.alt = winner.name;
+        winnerName.textContent = winner.name;
+        progressFill.style.width = '100%';
+
+        if (namespace && winner.key && !hasTracked) {
+          hasTracked = true;
+          var url = 'https://abacus.jasoncameron.dev/hit/' + encodeURIComponent(namespace) + '/' + encodeURIComponent(winner.key);
+          fetch(url).catch(function () { /* Ergebnis-Zählung ist rein optional, Fehler hier stören den Ablauf nicht */ });
+        }
+      }
+
+      cardLeft.addEventListener('click', function () { choose('left'); });
+      cardRight.addEventListener('click', function () { choose('right'); });
+      restartBtn.addEventListener('click', start);
+
+      start();
+    }
+
+    function enterPreview() {
+      var q = document.getElementById('quiz-view');
+      q.outerHTML = QUIZ_TEMPLATE; // fresh node -> old click listeners are gone
+      document.getElementById('admin-view').style.display = 'none';
+      document.getElementById('quiz-view').style.display = 'block';
+      backBtn.style.display = 'inline-block';
+      initQuiz(images, (questionInput.value || '').trim() || DEFAULT_QUESTION, null);
+    }
+
+    function exitPreview() {
+      document.getElementById('quiz-view').style.display = 'none';
+      document.getElementById('admin-view').style.display = 'block';
+      backBtn.style.display = 'none';
+    }
+
+    // Adds a stable, URL-safe "key" to each image so the same image always
+    // maps to the same counter, both in the student page and the overview.
+    function buildKeyedImages() {
+      return images.map(function (img, idx) {
+        return { name: img.name, dataUrl: img.dataUrl, key: sanitizeKey(img.name) + '-' + idx };
+      });
+    }
+
+    function buildExportHTML() {
+      var questionText = (questionInput.value || '').trim() || DEFAULT_QUESTION;
+      var trackingEnabled = trackingCheckbox.checked;
+      var namespace = trackingEnabled ? sanitizeKey(namespaceInput.value || randomNamespace()) : null;
+      var dataJson = toEmbeddableJSON(buildKeyedImages());
+      var questionJson = toEmbeddableJSON(questionText);
+      var namespaceJson = toEmbeddableJSON(namespace);
+      var quizFnSrc = initQuiz.toString();
+      return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${escapeHtml(questionText)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>${CSS_TEXT}</style>
+</head>
+<body>
+${QUIZ_TEMPLATE}
+<script>
+(function () {
+var IMAGES = ${dataJson};
+var QUESTION = ${questionJson};
+var NAMESPACE = ${namespaceJson};
+${quizFnSrc}
+initQuiz(IMAGES, QUESTION, NAMESPACE);
+})();
+<\/script>
+</body>
+</html>`;
+    }
+
+    // --- Overview logic. Also self-contained so it can be embedded via
+    // toString() into the exported teacher overview file. ---
+    function initOverview(images, question, namespace) {
+      var qEl = document.getElementById('ov-question');
+      if (qEl) qEl.textContent = question || '';
+
+      var totalEl = document.getElementById('ov-total');
+      var updatedEl = document.getElementById('ov-updated');
+      var loadingEl = document.getElementById('ov-loading');
+      var errorEl = document.getElementById('ov-error');
+      var emptyEl = document.getElementById('ov-empty');
+      var podiumEl = document.getElementById('ov-podium');
+      var listEl = document.getElementById('ov-list');
+      var refreshBtn = document.getElementById('ov-refresh');
+      var retryBtn = document.getElementById('ov-retry');
+
+      function setState(state) {
+        loadingEl.style.display = state === 'loading' ? 'block' : 'none';
+        errorEl.style.display = state === 'error' ? 'block' : 'none';
+        emptyEl.style.display = state === 'empty' ? 'block' : 'none';
+        podiumEl.style.display = state === 'ready' ? 'flex' : 'none';
+        listEl.style.display = state === 'ready' ? 'block' : 'none';
+      }
+
+      function fetchCount(item) {
+        var url = 'https://abacus.jasoncameron.dev/get/' + encodeURIComponent(namespace) + '/' + encodeURIComponent(item.key);
+        return fetch(url).then(function (res) {
+          if (res.status === 404) return 0;
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json().then(function (data) { return data.value || 0; });
+        });
+      }
+
+      function medalLabel(rank) {
+        if (rank === 0) return '1. Platz';
+        if (rank === 1) return '2. Platz';
+        if (rank === 2) return '3. Platz';
+        return (rank + 1) + '.';
+      }
+
+      function render(results) {
+        var total = results.reduce(function (sum, r) { return sum + r.count; }, 0);
+        totalEl.textContent = total + (total === 1 ? ' abgeschlossene Abstimmung' : ' abgeschlossene Abstimmungen');
+
+        if (total === 0) {
+          setState('empty');
+          return;
+        }
+
+        var sorted = results.slice().sort(function (a, b) { return b.count - a.count; });
+
+        podiumEl.innerHTML = '';
+        sorted.slice(0, 3).forEach(function (r, i) {
+          var card = document.createElement('div');
+          card.className = 'podium-card medal-' + (i === 0 ? 'gold' : i === 1 ? 'silver' : 'bronze');
+
+          var rankP = document.createElement('p');
+          rankP.className = 'podium-rank';
+          rankP.textContent = medalLabel(i);
+          card.appendChild(rankP);
+
+          var img = document.createElement('img');
+          img.src = r.dataUrl;
+          img.alt = r.name;
+          img.className = 'podium-img';
+          card.appendChild(img);
+
+          var nameP = document.createElement('p');
+          nameP.className = 'podium-name';
+          nameP.textContent = r.name;
+          card.appendChild(nameP);
+
+          var countP = document.createElement('p');
+          countP.className = 'podium-count';
+          var pct = total ? Math.round((r.count / total) * 100) : 0;
+          countP.textContent = r.count + (r.count === 1 ? ' Stimme' : ' Stimmen') + ' (' + pct + '%)';
+          card.appendChild(countP);
+
+          podiumEl.appendChild(card);
+        });
+
+        listEl.innerHTML = '';
+        sorted.forEach(function (r, i) {
+          var li = document.createElement('li');
+          li.className = 'rank-row';
+
+          var rank = document.createElement('span');
+          rank.className = 'rank-num';
+          rank.textContent = (i + 1) + '.';
+          li.appendChild(rank);
+
+          var img = document.createElement('img');
+          img.src = r.dataUrl;
+          img.alt = '';
+          li.appendChild(img);
+
+          var name = document.createElement('span');
+          name.className = 'rank-name';
+          name.textContent = r.name;
+          li.appendChild(name);
+
+          var count = document.createElement('span');
+          count.className = 'rank-count';
+          count.textContent = String(r.count);
+          li.appendChild(count);
+
+          listEl.appendChild(li);
+        });
+
+        setState('ready');
+      }
+
+      function load() {
+        setState('loading');
+        Promise.all(images.map(function (item) {
+          return fetchCount(item).then(function (count) {
+            return { name: item.name, dataUrl: item.dataUrl, count: count };
+          });
+        })).then(function (results) {
+          render(results);
+          updatedEl.textContent = 'Stand: ' + new Date().toLocaleTimeString('de-DE');
+        }).catch(function (err) {
+          console.error(err);
+          setState('error');
+        });
+      }
+
+      refreshBtn.addEventListener('click', load);
+      retryBtn.addEventListener('click', load);
+
+      load();
+    }
+
+    
+    async function buildShareLink() {
+      var questionText = (questionInput.value || '').trim() || DEFAULT_QUESTION;
+      var trackingEnabled = trackingCheckbox.checked;
+      var namespace = trackingEnabled ? sanitizeKey(namespaceInput.value || randomNamespace()) : null;
+      var payload = { images: buildKeyedImages(), question: questionText, namespace: namespace };
+      var json = JSON.stringify(payload);
+      var bytes = new TextEncoder().encode(json);
+      var compressed;
+      if (typeof CompressionStream !== 'undefined') {
+        var cs = new CompressionStream('deflate-raw');
+        var writer = cs.writable.getWriter();
+        writer.write(bytes);
+        writer.close();
+        var chunks = [];
+        var reader = cs.readable.getReader();
+        while (true) {
+          var result = await reader.read();
+          if (result.done) break;
+          chunks.push(result.value);
+        }
+        var total = chunks.reduce(function(s, chunk) { return s + chunk.length; }, 0);
+        compressed = new Uint8Array(total);
+        var offset = 0;
+        chunks.forEach(function(chunk) { compressed.set(chunk, offset); offset += chunk.length; });
+      } else {
+        compressed = bytes;
+      }
+      var mode = (typeof CompressionStream !== 'undefined') ? 'z' : 'j';
+      var binStr = '';
+      for (var i = 0; i < compressed.length; i++) binStr += String.fromCharCode(compressed[i]);
+      var b64 = btoa(binStr).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      var baseUrl = window.location.origin + window.location.pathname;
+      return baseUrl + '#' + mode + b64;
+    }
+
+    function buildOverviewHTML() {
+      var questionText = (questionInput.value || '').trim() || DEFAULT_QUESTION;
+      var namespace = sanitizeKey(namespaceInput.value || randomNamespace());
+      var dataJson = toEmbeddableJSON(buildKeyedImages());
+      var questionJson = toEmbeddableJSON(questionText);
+      var namespaceJson = toEmbeddableJSON(namespace);
+      var overviewFnSrc = initOverview.toString();
+      return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ergebnisse – ${escapeHtml(questionText)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>${CSS_TEXT}</style>
+</head>
+<body>
+${OVERVIEW_TEMPLATE}
+<script>
+(function () {
+var IMAGES = ${dataJson};
+var QUESTION = ${questionJson};
+var NAMESPACE = ${namespaceJson};
+${overviewFnSrc}
+initOverview(IMAGES, QUESTION, NAMESPACE);
+})();
+<\/script>
+</body>
+</html>`;
+    }
+
+    previewBtn.addEventListener('click', enterPreview);
+    backBtn.addEventListener('click', exitPreview);
+    trackingCheckbox.addEventListener('change', updateActionButtons);
+
+    linkBtn.addEventListener('click', function () {
+      buildShareLink().then(function(url) {
+        linkUrl.value = url;
+        linkOutput.style.display = 'block';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).catch(function() {});
+        } else {
+          linkUrl.select();
+          try { document.execCommand('copy'); } catch(e) {}
+        }
+      }).catch(function(err) {
+        alert('Fehler beim Erstellen des Links: ' + err.message);
+      });
+    });
+
+    exportOverviewBtn.addEventListener('click', function () {
+            var overviewHtml = buildOverviewHTML();
+            var blob = new Blob([overviewHtml], { type: 'text/html' });
+            var url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+    });
+
+    (function() {
+      var hash = window.location.hash;
+      if (hash && (hash.charAt(1) === 'z' || hash.charAt(1) === 'j')) {
+        document.getElementById('admin-view').style.display = 'none';
+        var encoded = hash.slice(2);
+        var b64 = encoded.replace(/-/g, '+').replace(/_/g, '/');
+        var pad = (4 - b64.length % 4) % 4;
+        b64 += '=='.slice(0, pad);
+        try {
+          var binStr = atob(b64);
+          var bytes = new Uint8Array(binStr.length);
+          for (var i = 0; i < binStr.length; i++) bytes[i] = binStr.charCodeAt(i);
+          if (hash.charAt(1) === 'z' && typeof DecompressionStream !== 'undefined') {
+            var ds = new DecompressionStream('deflate-raw');
+            var writer = ds.writable.getWriter();
+            writer.write(bytes);
+            writer.close();
+            var chunks = [];
+            var reader = ds.readable.getReader();
+            function pump() {
+              return reader.read().then(function(result) {
+                if (result.done) return;
+                chunks.push(result.value);
+                return pump();
+              });
+            }
+            pump().then(function() {
+              var total = chunks.reduce(function(s, c) { return s + c.length; }, 0);
+              var out = new Uint8Array(total);
+              var offset = 0;
+              chunks.forEach(function(c) { out.set(c, offset); offset += c.length; });
+              var json = new TextDecoder().decode(out);
+              var data = JSON.parse(json);
+              document.getElementById('quiz-view').style.display = 'block';
+              initQuiz(data.images, data.question, data.namespace);
+            }).catch(function(e) {
+              document.getElementById('admin-view').style.display = 'block';
+              alert('Fehler beim Laden des Quiz-Links: ' + e.message);
+            });
+          } else {
+            var json = new TextDecoder().decode(bytes);
+            var data = JSON.parse(json);
+            document.getElementById('quiz-view').style.display = 'block';
+            initQuiz(data.images, data.question, data.namespace);
+          }
+        } catch(e) {
+          document.getElementById('admin-view').style.display = 'block';
+          alert('Ungültiger Quiz-Link: ' + e.message);
+        }
+      } else {
+        namespaceInput.value = randomNamespace();
+        renderImageList();
+        updateActionButtons();
+      }
+    })();
+  </script>
+</body>
+</html>
