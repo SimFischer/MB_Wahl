@@ -657,7 +657,7 @@
           var img = new Image();
           img.onerror = function () { reject(new Error('Foto konnte nicht gelesen werden')); };
           img.onload = function () {
-            var maxDim = 1000;
+            var maxDim = 600;
             var w = img.naturalWidth || 1;
             var h = img.naturalHeight || 1;
             var scale = Math.min(1, maxDim / Math.max(w, h));
@@ -670,7 +670,7 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, cw, ch);
             ctx.drawImage(img, 0, 0, cw, ch);
-            resolve(canvas.toDataURL('image/jpeg', 0.85));
+            resolve(canvas.toDataURL('image/jpeg', 00.75);
           };
           img.src = reader.result;
         };
